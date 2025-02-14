@@ -1,4 +1,6 @@
 import json
+from fileinput import close
+
 import matplotlib.pyplot as plt
 
 
@@ -45,17 +47,8 @@ Menu:
     print(color_text(menu_text, BLUE))
 
 
-def get_movies():
-    """
-    Returns a dictionary of dictionaries that contains the movies information.
-    """
-    with open("movies.json", "r") as file:
-        movies = json.loads(file.read())
-    return movies
-
-
-def user_choice(movies):
-
+def user_choice():
+    movies = get_movies()
     choice = input(color_text("Enter choice (0-11): ", BLUE))
     if choice == "0":
         print("Bye!")
@@ -65,35 +58,35 @@ def user_choice(movies):
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "2":
-        add_movie(movies)
+        add_movie()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "3":
-        delete_movie(movies)
+        delete_movie()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "4":
-        update_movie(movies)
+        update_movie()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "5":
-        stats(movies)
+        stats()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "6":
-        random_movie(movies)
+        random_movie()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "7":
-        search_movie(movies)
+        search_movie()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "8":
-        movies_sorted_by_rating(movies)
+        movies_sorted_by_rating()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "9":
-        movies_sorted_by_year(movies)
+        movies_sorted_by_year()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     #elif choice == "10":
@@ -109,18 +102,21 @@ def user_choice(movies):
         input(color_text("Press Enter to continue", YELLOW))
 
 
+def get_movies():
+    """
+    Returns a dictionary of dictionaries that contains the movies information.
+    """
+    with open("movies.json", "r") as file:
+        movies = json.loads(file.read())
+    return movies
+
+
 def save_movies(movies):
     """
     Gets all your movies as an argument and saves them to the JSON file.
     """
     with open("movies.json", "w") as file:
         json.dump(movies, file)
-
-
-def list_movies():
-    movies = get_movies()
-    for movie_name, details in movies.items():
-        print(f"{movie_name} ({details["year"]}): {details["rating"]}")
 
 
 def get_movie_name():
@@ -154,17 +150,25 @@ def get_movie_year():
             print(color_text("Invalid input. Please enter numeric value", RED))
 
 
-
-def add_movie(movies):
+def list_movies():
     """
-    Adds a movie to the movies database.
+    Lists all movies of the movie database.
+    Loads the information from the JSON file, add the movie,
+    and saves it. The function doesn't need to validate the input.
+    """
+    movies = get_movies()
+    for movie_name, details in movies.items():
+        print(f"{movie_name} ({details["year"]}): {details["rating"]}")
+
+
+def add_movie():
+    """
+    Adds a movie to the movie database.
     Loads the information from the JSON file, add the movie,
     and saves it. The function doesn't need to validate the input.
     """
     movies = get_movies()
     movie = get_movie_name()
-    print(movies)
-    print(movie)
     for movie_name, details in movies.items():
         if movie in movie_name:
             print(color_text(f"Movie '{movie}' already exists", RED))
@@ -178,81 +182,59 @@ def add_movie(movies):
     print(color_text(f"Movie '{movie}' successfully added", GREEN))
 
 
-def delete_movie(title):
+def delete_movie():
     """
-    Deletes a movie from the movies database.
+    Deletes a movie from the movie database.
     Loads the information from the JSON file, deletes the movie,
     and saves it. The function doesn't need to validate the input.
     """
-    pass
-
-
-def update_movie(title, rating):
-    """
-    Updates a movie from the movies database.
-    Loads the information from the JSON file, updates the movie,
-    and saves it. The function doesn't need to validate the input.
-    """
-    pass
-
-
-def get_movie_name():
-    movie = input(color_text("Enter movie name: ", BLUE)).title()
-    return movie
-
-
-def get_movie_rating():
-    while True:
-        rating = input(color_text("Enter movie rating (0-10): ", BLUE)).replace(",", ".")
-        if rating.replace(".", "").isdigit():
-            rating = float(rating)
-            if 0.0 <= rating <= 10.0:
-                return rating
-            else:
-                print(color_text("Rating must be between 0 and 10", RED))
-        else:
-            print(color_text("Invalid input. Please enter numeric value", RED))
-
-
-
-
-'''
-def add_movie(movies):
-    if movie in movies:
-        print(color_text(f"Movie '{movie}' already exists", RED))
-        return
-    rating = get_movie_rating()
-    movies[movie] = rating
-    print(color_text(f"Movie '{movie}' successfully added", GREEN))
-
-
-def del_movie(movies):
+    movies = get_movies()
     movie = get_movie_name()
+
     if movie in movies:
         del movies[movie]
         print(color_text(f"Movie '{movie}' successfully deleted", GREEN))
     else:
         print(color_text(f"Movie '{movie}' doesn't exist", RED))
-        return
+
+    save_movies(movies)
 
 
-def update_movie(movies):
+def update_movie():
+    """
+    Updates a movie from the movie database.
+    Loads the information from the JSON file, updates the movie,
+    and saves it. The function doesn't need to validate the input.
+    """
+    movies = get_movies()
     movie = get_movie_name()
     if movie in movies:
         rating = get_movie_rating()
-        movies[movie] = rating
-        print(color_text(f"Movie '{movie}' successfully updated with rating {rating}", GREEN))
-
+        year = get_movie_year()
+        movies[movie] = {"rating": rating, "year":year}
+        print(color_text(f"Movie '{movie}' successfully updated", GREEN))
     else:
         print(color_text(f"Movie '{movie}' doesn't exist", RED))
         return
 
+    save_movies(movies)
 
-def stats(movies):
-    """Average & median rating, best & worst movie(s) by rating"""
-    ratings = sorted(movies.values())
+
+
+def stats():
+    """"""
+    """
+   Loads the information from the JSON file.
+   Calculates the average & median rating 
+   and lists the best & worst movie(s) based on their rating. 
+   """
+    movies = get_movies()
+
+    ratings = []
+    for movie_name, details in movies.items():
+        ratings.append(details["rating"])
+
     count = len(ratings)
-
     average_rating = sum(ratings) / count
     print(f"Average rating: {average_rating:.2f}")
 
@@ -264,18 +246,20 @@ def stats(movies):
         median_rating = (mid1 + mid2) / 2
     print(f"Median rating: {median_rating:.2f}")
 
-    max_rating = max(movies.values())
+    max_rating = max(ratings)
     best_movies = []
-    for movie, rating in movies.items():
+    for movie, details in movies.items():
+        rating = details["rating"]
         if rating == max_rating:
             best_movies.append(movie)
     print(f"Best movie(s) with rating: {max_rating}:")
     for movie in best_movies:
         print(color_text(f"- {movie}", GREEN))
 
-    min_rating = min(movies.values())
+    min_rating = min(ratings)
     worst_movies = []
-    for movie, rating in movies.items():
+    for movie, details in movies.items():
+        rating = details["rating"]
         if rating == min_rating:
             worst_movies.append(movie)
     print(f"Worst movie(s) with rating: {min_rating}:")
@@ -283,9 +267,7 @@ def stats(movies):
         print(color_text(f"- {movie}", GREEN))
 
 
-
-
-
+'''
 def random_movie(movies):
     movie = random.choice(list(movies.keys()))
     rating = movies[movie]
@@ -350,10 +332,9 @@ def rating_histogram(movies):
 
 def main():
     print(color_text("\n********** MOVIE DATABASE **********", BLUE))
-    movies = get_movies()
     while True:
         display_menu()
-        user_choice(movies)
+        user_choice()
         print("")
 
 
