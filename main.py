@@ -1,8 +1,8 @@
-import json
-from fileinput import close
-
+import sys
+import random
 import matplotlib.pyplot as plt
-
+from movie_storage import get_movies, save_movies, add_movie, delete_movie, update_movie
+from utils import color_text, get_movie_name, get_movie_rating, get_movie_year
 
 """
 This program contains a json file which holds a dictionary
@@ -16,11 +16,6 @@ To enhance the visual experience, various colors have been applied.
 """
 
 
-def color_text(text, color_code):
-    # Applies an ANSI color code to the given text.
-    return f"\033[{color_code}m{text}\033[0m"
-
-
 # Define color codes
 BLUE = "94"
 RED = "31"
@@ -29,6 +24,9 @@ GREEN = "32"
 
 
 def display_menu():
+    """
+    Contains the menu which is displayed to the user.
+    """
     menu_text = """ 
 Menu:
 0. Exit
@@ -48,25 +46,30 @@ Menu:
 
 
 def user_choice():
+    """
+    Effective choice menu.
+    Will execute related options displayed in the menu.
+    """
     movies = get_movies()
     choice = input(color_text("Enter choice (0-11): ", BLUE))
     if choice == "0":
         print("Bye!")
+        sys.exit()
     elif choice == "1":
         print(color_text(f"{len(movies)} movies in total", GREEN))
         list_movies()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "2":
-        add_movie()
+        add_movie(get_movie_name, get_movie_rating, get_movie_year)
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "3":
-        delete_movie()
+        delete_movie(get_movie_name)
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "4":
-        update_movie()
+        update_movie(get_movie_name, get_movie_rating)
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "5":
@@ -89,65 +92,17 @@ def user_choice():
         movies_sorted_by_year()
         print("")
         input(color_text("Press Enter to continue", YELLOW))
-    #elif choice == "10":
-    #    filtering_year(movies)
-    #    print("")
-    #    input(color_text("Press Enter to continue", YELLOW))
-    # elif choice == "11":
-    #    rating_histogram(movies)
-    #    print("")
-    #   input(color_text("Press Enter to continue", YELLOW))
+    elif choice == "10":
+       filtering_movies()
+       print("")
+       input(color_text("Press Enter to continue", YELLOW))
+    elif choice == "11":
+       rating_histogram()
+       print("")
+       input(color_text("Press Enter to continue", YELLOW))
     else:
-        print(color_text("Invalid choice! Please enter a number between 1 and 8", RED))
+        print(color_text("Invalid choice! Please enter a number between 0 and 11", RED))
         input(color_text("Press Enter to continue", YELLOW))
-
-
-def get_movies():
-    """
-    Returns a dictionary of dictionaries that contains the movies information.
-    """
-    with open("movies.json", "r") as file:
-        movies = json.loads(file.read())
-    return movies
-
-
-def save_movies(movies):
-    """
-    Gets all your movies as an argument and saves them to the JSON file.
-    """
-    with open("movies.json", "w") as file:
-        json.dump(movies, file)
-
-
-def get_movie_name():
-    movie = input(color_text("Enter movie name: ", BLUE)).title()
-    return movie
-
-
-def get_movie_rating():
-    while True:
-        rating = input(color_text("Enter movie rating (0-10): ", BLUE)).replace(",", ".")
-        if rating.replace(".", "").isdigit():
-            rating = float(rating)
-            if 0.0 <= rating <= 10.0:
-                return rating
-            else:
-                print(color_text("Rating must be between 0 and 10", RED))
-        else:
-            print(color_text("Invalid input. Please enter numeric value", RED))
-
-
-def get_movie_year():
-    while True:
-        year = input(color_text("Enter movie year: ", BLUE)).strip()
-        if year.isdigit():
-            year = int(year)
-            if 1900 < year < 2025:
-                return year
-            else:
-                print(color_text("Rating must be between 0 and 10", RED))
-        else:
-            print(color_text("Invalid input. Please enter numeric value", RED))
 
 
 def list_movies():
@@ -161,73 +116,12 @@ def list_movies():
         print(f"{movie_name} ({details["year"]}): {details["rating"]}")
 
 
-def add_movie():
-    """
-    Adds a movie to the movie database.
-    Loads the information from the JSON file, add the movie,
-    and saves it. The function doesn't need to validate the input.
-    """
-    movies = get_movies()
-    movie = get_movie_name()
-    for movie_name, details in movies.items():
-        if movie in movie_name:
-            print(color_text(f"Movie '{movie}' already exists", RED))
-            return
-
-
-    rating = get_movie_rating()
-    year = get_movie_year()
-    movies[movie] = {"rating": rating, "year": year}
-    save_movies(movies)
-    print(color_text(f"Movie '{movie}' successfully added", GREEN))
-
-
-def delete_movie():
-    """
-    Deletes a movie from the movie database.
-    Loads the information from the JSON file, deletes the movie,
-    and saves it. The function doesn't need to validate the input.
-    """
-    movies = get_movies()
-    movie = get_movie_name()
-
-    if movie in movies:
-        del movies[movie]
-        print(color_text(f"Movie '{movie}' successfully deleted", GREEN))
-    else:
-        print(color_text(f"Movie '{movie}' doesn't exist", RED))
-
-    save_movies(movies)
-
-
-def update_movie():
-    """
-    Updates a movie from the movie database.
-    Loads the information from the JSON file, updates the movie,
-    and saves it. The function doesn't need to validate the input.
-    """
-    movies = get_movies()
-    movie = get_movie_name()
-    if movie in movies:
-        rating = get_movie_rating()
-        year = get_movie_year()
-        movies[movie] = {"rating": rating, "year":year}
-        print(color_text(f"Movie '{movie}' successfully updated", GREEN))
-    else:
-        print(color_text(f"Movie '{movie}' doesn't exist", RED))
-        return
-
-    save_movies(movies)
-
-
-
 def stats():
-    """"""
     """
-   Loads the information from the JSON file.
-   Calculates the average & median rating 
-   and lists the best & worst movie(s) based on their rating. 
-   """
+    Loads the information from the JSON file.
+    Calculates the average & median rating
+    and lists the best & worst movie(s) based on their rating.
+    """
     movies = get_movies()
 
     ratings = []
@@ -267,30 +161,51 @@ def stats():
         print(color_text(f"- {movie}", GREEN))
 
 
-'''
-def random_movie(movies):
-    movie = random.choice(list(movies.keys()))
-    rating = movies[movie]
-    print(color_text(f"Your movie for tonight: '{movie}', Rating: {rating}", GREEN))
+def random_movie():
+    """
+    Loads the information from the JSON file.
+    Randomly picks and displays a movie from the database.
+    """
+    movies = get_movies()
+    movies_list = []
+    for movie in movies:
+        movies_list.append(movie)
+    movie = random.choice(movies_list)
+    rating = movies[movie]["rating"]
+    year = movies[movie]["year"]
+
+    print(color_text(f"Your movie for tonight: '{movie} ({year})', Rating: {rating}", GREEN))
 
 
-def search_movie(movies):
+def search_movie():
+    """
+    Loads the information from the JSON file.
+    Displays all movies which hold at least a substring of the movie name.
+    """
+    movies = get_movies()
     movie = get_movie_name().casefold()
+
     found = False
-    for movies, ratings in movies.items():
+    for movies, details in movies.items():
         if movie in movies.casefold():
-            # str-length: 3 char minimum
-            if len(movie) > 2:
-                print(color_text(f"- {movies}: {ratings}", GREEN))
+                print(color_text(f"- {movies}: {details["rating"]}", GREEN))
                 found = True
     if not found:
         print(color_text("No entry under this name", RED))
 
 
-def movies_sorted_by_rating(movies):
-    # dict conversion into two lists for movies & their ratings
-    movie_names = list(movies.keys())
-    movie_ratings = list(movies.values())
+def movies_sorted_by_rating():
+    """
+    Loads the information from the JSON file.
+    Converts the dictionary into two lists to display all movies sorted by their rating.
+    """
+    movies = get_movies()
+
+    movie_names = []
+    movie_ratings = []
+    for movie, details in movies.items():
+        movie_names.append(movie)
+        movie_ratings.append(details["rating"])
 
     for i in range(len(movie_ratings)):
         for j in range(i + 1, len(movie_ratings)):
@@ -300,16 +215,97 @@ def movies_sorted_by_rating(movies):
                 movie_ratings[i], movie_ratings[j] = movie_ratings[j], movie_ratings[i]
                 # Swap corresponding movie names
                 movie_names[i], movie_names[j] = movie_names[j], movie_names[i]
-
+    print(color_text(f"Movies listed by rating:", GREEN))
     for i in range(len(movie_names)):
-        print(color_text(f"- {movie_names[i]}: {movie_ratings[i]}", GREEN))
-
-'''
+        print(f"- {movie_names[i]}: {movie_ratings[i]}")
 
 
+def movies_sorted_by_year():
+    """
+    Loads the information from the JSON file.
+    Converts the dictionary into two lists to display all movies sorted by their year.
+    """
+    movies = get_movies()
+    movie_names = []
+    movie_years = []
+    for movie, details in movies.items():
+        movie_names.append(movie)
+        movie_years.append(details["year"])
 
-def rating_histogram(movies):
-    ratings = list(movies.values())  # extract ratings from dictionary
+    for i in range(len(movie_years)):
+        for j in range(i + 1, len(movie_years)):
+            # Compare ratings
+            if movie_years[i] < movie_years[j]:
+                # Swap ratings - if lower rating first
+                movie_years[i], movie_years[j] = movie_years[j], movie_years[i]
+                # Swap corresponding movie names
+                movie_names[i], movie_names[j] = movie_names[j], movie_names[i]
+    print(color_text(f"Movies listed by rating:", GREEN))
+    for i in range(len(movie_names)):
+        print(f"- {movie_names[i]}: {movie_years[i]}")
+
+
+def filtering_movies():
+    """
+    Loads the information from the JSON file.
+    Filters the movies based on minimum rating, as well as start & end year requested from the user.
+    """
+    movies = get_movies()
+    while True:
+        min_rating = input(color_text(f"Enter minimum rating (leave blank for no minimum rating): ", BLUE))
+        if min_rating == "":  # Allowing blank input
+            min_rating = 0.0
+            break
+        try:
+            min_rating = float(min_rating)
+            break
+        except ValueError:
+            print(color_text(f"Invalid input. Please enter a valid number.", RED))
+
+    while True:
+        start_year = input(color_text(f"Enter start year (leave blank for no start year): ", BLUE))
+        if start_year == "":  # Allowing blank input
+            start_year = 0
+            break
+        try:
+            start_year = int(start_year)
+            break
+        except ValueError:
+            print(color_text(f"Invalid input. Please enter a valid year.", RED))
+
+    while True:
+        end_year = input(color_text(f"Enter end year (leave blank for no end year): ", BLUE))
+        if end_year == "":  # Allowing blank input
+            end_year = 3000
+            break
+        try:
+            end_year = int(end_year)
+            break
+        except ValueError:
+            print(color_text(f"Invalid input. Please enter a valid year.", RED))
+
+    filtered_by_rating = {}
+    for movie, details in movies.items():
+        if details["rating"] >= min_rating and start_year <= details["year"] and end_year >= details["year"]:
+            filtered_by_rating[movie] = {"rating": details["rating"], "year": details["year"]}
+
+    if filtered_by_rating:
+        print(color_text(f"\nFiltered movies", GREEN))
+        for movie, details in filtered_by_rating.items():
+            print(f"{movie} ({details["year"]}): {details["rating"]}")
+    else:
+        print(color_text(f"No movies were filtered", RED))
+
+
+def rating_histogram():
+    """
+    Loads the information from the JSON file.
+    Creates a histogram based on the movie ratings.
+    """
+    movies = get_movies()
+    ratings = []
+    for movie, details in movies.items():
+        ratings.append(details["rating"])  # extract ratings from dictionary
 
     # Create histogram
     plt.hist(ratings, bins=range(0, 11), edgecolor="yellow")  # Range 0-10 for ratings
@@ -326,8 +322,6 @@ def rating_histogram(movies):
     print(color_text(f"Histogram successfully saved to '{file_name}'", GREEN))
 
     plt.show()
-
-
 
 
 def main():
