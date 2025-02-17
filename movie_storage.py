@@ -39,8 +39,6 @@ def add_movie(get_movie_name, get_movie_rating, get_movie_year):
                 print(color_text(f"Movie '{movie}' already exists", RED))
                 return
 
-
-
     rating = get_movie_rating()
     year = get_movie_year()
 
@@ -74,16 +72,30 @@ def update_movie(get_movie_name, get_movie_rating):
     and saves it. The function doesn't need to validate the input.
     """
     movies = get_movies()
-    movie = get_movie_name()
+    while True:
+        movie = input(color_text("Enter movie name or 'X' to exit: ", BLUE)).title()
+        if movie == "":
+            print(color_text(f"Invalid Input. Enter a valid name", RED))
+            continue
+        if movie.lower() == "x":
+            return
 
-    if movie in movies:
-        rating = get_movie_rating()
-        year = movies[movie]["year"]
+        if not movie in movies:
+            print(color_text(f"Movie '{movie}' doesn't exist", RED))
+            continue
 
-        movies[movie] = {"rating": rating, "year": year}
+        if movie in movies:
+            year = movies[movie]["year"]
+            choice = input(color_text("Do you want to edit the movie name Y/N ?" , BLUE))
+            if choice.lower() == "y":
+                movie = get_movie_name()
+                rating = get_movie_rating()
+                movies[movie] = {"rating": rating, "year": year}
+            if choice.lower() == "n":
+                rating = get_movie_rating()
+                movies[movie] = {"rating": rating, "year": year}
+
         print(color_text(f"Movie '{movie}' successfully updated", GREEN))
-    else:
-        print(color_text(f"Movie '{movie}' doesn't exist", RED))
-        return
 
-    save_movies(movies)
+        save_movies(movies)
+        return
