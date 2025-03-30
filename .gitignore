@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Ignore all .idea project settings
+.idea/
+
+# Ignore all IntelliJ-based project files
+*.iml
+
+
 # C extensions
 *.so
 

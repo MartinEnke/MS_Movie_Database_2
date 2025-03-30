@@ -1,12 +1,5 @@
-from utils import color_text
 from movie_storage import get_movies
-
-# Define color codes
-BLUE = "94"
-RED = "31"
-YELLOW = "33"
-GREEN = "32"
-
+from utils import color_text, GREEN
 
 def stats():
     """
@@ -31,6 +24,7 @@ def stats():
         mid2 = ratings[count // 2]
         median_rating = (mid1 + mid2) / 2
     print(f"Median rating: {median_rating:.2f}")
+    print()
 
     max_rating = max(ratings)
     best_movies = []

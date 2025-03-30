@@ -1,5 +1,6 @@
-from utils import color_text
+from utils import color_text, BLUE
 from menu import display_menu, user_choice
+
 
 """
 This program contains a json file which holds a dictionary
@@ -11,13 +12,6 @@ and filtering by rating or year.
 It also provides the option to create a histogram based on the movie ratings.
 To enhance the visual experience, various colors have been applied.
 """
-
-
-# Define color codes
-BLUE = "94"
-RED = "31"
-YELLOW = "33"
-GREEN = "32"
 
 
 def main():

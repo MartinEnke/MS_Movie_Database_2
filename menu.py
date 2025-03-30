@@ -1,19 +1,10 @@
 import sys
 from movie_storage import get_movies, add_movie, delete_movie, update_movie
-from utils import color_text, get_movie_name, get_movie_rating, get_movie_year
-from list_movies import list_movies
+from utils import color_text, BLUE, RED, YELLOW, GREEN, get_movie_name, get_movie_rating, get_movie_year
 from stats import stats
-from random_movie import random_movie
-from search_movie import search_movie
-from sorting import movies_sorted_by_rating, movies_sorted_by_year
-from filtering_movies import filtering_movies
-from rating_histogram import rating_histogram
-
-# Define color codes
-BLUE = "94"
-RED = "31"
-YELLOW = "33"
-GREEN = "32"
+from random_search import random_movie, search_movie
+from show_movies import list_movies, movies_sorted_by_rating, movies_sorted_by_year, movies_sorted_by_alphabet, filtering_movies
+from histogram import rating_histogram
 
 
 def display_menu():
@@ -32,8 +23,10 @@ Menu:
 7. Search movie
 8. Movies sorted by rating
 9. Movies sorted by year
-10. Filter movies
-11. Create Rating Histogram
+10. Movies sorted alphabetically
+11. Filter movies
+12. Create Rating Histogram
+
 """
     print(color_text(menu_text, BLUE))
 
@@ -44,7 +37,7 @@ def user_choice():
     Will execute related options displayed in the menu.
     """
     movies = get_movies()
-    choice = input(color_text("Enter choice (0-11): ", BLUE))
+    choice = input(color_text("Enter choice (0-12): ", BLUE))
     if choice == "0":
         print("Bye!")
         sys.exit()
@@ -86,10 +79,14 @@ def user_choice():
         print("")
         input(color_text("Press Enter to continue", YELLOW))
     elif choice == "10":
-       filtering_movies()
+       movies_sorted_by_alphabet()
        print("")
        input(color_text("Press Enter to continue", YELLOW))
     elif choice == "11":
+       filtering_movies()
+       print("")
+       input(color_text("Press Enter to continue", YELLOW))
+    elif choice == "12":
        rating_histogram()
        print("")
        input(color_text("Press Enter to continue", YELLOW))

@@ -1,12 +1,7 @@
-from utils import color_text
+from utils import color_text, BLUE, GREEN
 import matplotlib.pyplot as plt
 from movie_storage import get_movies
 
-# Define color codes
-BLUE = "94"
-RED = "31"
-YELLOW = "33"
-GREEN = "32"
 
 
 
