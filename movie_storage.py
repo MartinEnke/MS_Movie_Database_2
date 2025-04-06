@@ -1,22 +1,15 @@
-import json
-from utils import color_text, BLUE, RED, GREEN
+from utils import color_text, BLUE, RED, GREEN, get_movies, save_movies
 
 
-def get_movies():
+def list_movies():
     """
-    Returns a dictionary of dictionaries that contains the movies information.
+    Lists all movies of the movie database.
+    Loads the information from the JSON file, add the movie,
+    and saves it. The function doesn't need to validate the input.
     """
-    with open("data.json", "r") as file:
-        movies = json.load(file)
-        return movies
-
-
-def save_movies(movies):
-    """
-    Gets all your movies as an argument and saves them to the JSON file.
-    """
-    with open("data.json", "w") as file:
-        json.dump(movies, file, indent=4)
+    movies = get_movies()
+    for movie_name, details in movies.items():
+        print(f"{movie_name} ({details["year"]}): {details["rating"]}")
 
 
 def add_movie(get_movie_name, get_movie_rating, get_movie_year):

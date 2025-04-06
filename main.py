@@ -1,6 +1,5 @@
-from utils import color_text, BLUE
 from menu import display_menu, user_choice
-
+from utils import color_text, BLUE
 
 """
 This program contains a json file which holds a dictionary
@@ -20,7 +19,6 @@ def main():
         display_menu()
         user_choice()
         print("")
-
 
 if __name__ == "__main__":
     main()

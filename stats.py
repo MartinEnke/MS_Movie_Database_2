@@ -1,47 +1,50 @@
+import matplotlib.pyplot as plt
 from movie_storage import get_movies
-from utils import color_text, GREEN
+from utils import color_text
+from utils import GREEN, BLUE
+
 
 def stats():
-    """
-    Loads the information from the JSON file.
-    Calculates the average & median rating
-    and lists the best & worst movie(s) based on their rating.
-    """
     movies = get_movies()
-
-    ratings = []
-    for movie_name, details in movies.items():
-        ratings.append(details["rating"])
+    ratings = [details["rating"] for details in movies.values()]
 
     count = len(ratings)
     average_rating = sum(ratings) / count
     print(f"Average rating: {average_rating:.2f}")
 
+    sorted_ratings = sorted(ratings)
     if count % 2 == 1:
-        median_rating = ratings[count // 2]
+        median_rating = sorted_ratings[count // 2]
     else:
-        mid1 = ratings[count // 2 - 1]
-        mid2 = ratings[count // 2]
+        mid1 = sorted_ratings[count // 2 - 1]
+        mid2 = sorted_ratings[count // 2]
         median_rating = (mid1 + mid2) / 2
     print(f"Median rating: {median_rating:.2f}")
-    print()
 
     max_rating = max(ratings)
-    best_movies = []
-    for movie, details in movies.items():
-        rating = details["rating"]
-        if rating == max_rating:
-            best_movies.append(movie)
+    best_movies = [movie for movie, details in movies.items() if details["rating"] == max_rating]
     print(f"Best movie(s) with rating: {max_rating}:")
     for movie in best_movies:
         print(color_text(f"- {movie}", GREEN))
 
     min_rating = min(ratings)
-    worst_movies = []
-    for movie, details in movies.items():
-        rating = details["rating"]
-        if rating == min_rating:
-            worst_movies.append(movie)
+    worst_movies = [movie for movie, details in movies.items() if details["rating"] == min_rating]
     print(f"Worst movie(s) with rating: {min_rating}:")
     for movie in worst_movies:
         print(color_text(f"- {movie}", GREEN))
+
+
+
+def rating_histogram():
+    movies = get_movies()
+    ratings = [details["rating"] for details in movies.values()]
+
+    plt.hist(ratings, bins=range(0, 11), edgecolor="yellow")
+    plt.title('Movie Ratings Histogram')
+    plt.ylabel('Frequency')
+    plt.xlabel('Ratings')
+
+    file_name = input(color_text("Enter filename to save histogram: ", BLUE))
+    plt.savefig(file_name)
+    print(color_text(f"Histogram successfully saved to '{file_name}'", GREEN))
+    plt.show()

@@ -1,12 +1,32 @@
+import json
+
 def color_text(text, color_code):
     # Applies an ANSI color code to the given text.
     return f"\033[{color_code}m{text}\033[0m"
+
 
 # Define color codes
 BLUE = "94"
 RED = "31"
 YELLOW = "33"
 GREEN = "32"
+
+
+def get_movies():
+    """
+    Returns a dictionary of dictionaries that contains the movies information.
+    """
+    with open("movies.json", "r") as file:
+        movies = json.load(file)
+        return movies
+
+
+def save_movies(movies):
+    """
+    Gets all your movies as an argument and saves them to the JSON file.
+    """
+    with open("movies.json", "w") as file:
+        json.dump(movies, file, indent=4)
 
 
 def get_movie_name():

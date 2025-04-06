@@ -1,18 +1,16 @@
 import sys
-from movie_storage import get_movies, add_movie, delete_movie, update_movie
-from utils import color_text, BLUE, RED, YELLOW, GREEN, get_movie_name, get_movie_rating, get_movie_year
 from stats import stats
-from random_search import random_movie, search_movie
-from show_movies import list_movies, movies_sorted_by_rating, movies_sorted_by_year, movies_sorted_by_alphabet, filtering_movies
-from histogram import rating_histogram
+from movie_storage import list_movies, add_movie, delete_movie, update_movie
+from utils import color_text, BLUE, RED, YELLOW, GREEN, get_movie_name, get_movies, get_movie_rating, get_movie_year
+from process_movies import (random_movie, search_movie,
+                            movies_sorted_by_rating, movies_sorted_by_year, movies_sorted_by_alphabet, filtering_movies)
 
 
 def display_menu():
     """
     Contains the menu which is displayed to the user.
     """
-    menu_text = """ 
-Menu:
+    menu_text = """Menu:
 0. Exit
 1. List movies
 2. Add movie
@@ -25,8 +23,6 @@ Menu:
 9. Movies sorted by year
 10. Movies sorted alphabetically
 11. Filter movies
-12. Create Rating Histogram
-
 """
     print(color_text(menu_text, BLUE))
 
@@ -37,7 +33,7 @@ def user_choice():
     Will execute related options displayed in the menu.
     """
     movies = get_movies()
-    choice = input(color_text("Enter choice (0-12): ", BLUE))
+    choice = input(color_text("Enter choice (0-11): ", BLUE))
     if choice == "0":
         print("Bye!")
         sys.exit()
@@ -86,11 +82,6 @@ def user_choice():
        filtering_movies()
        print("")
        input(color_text("Press Enter to continue", YELLOW))
-    elif choice == "12":
-       rating_histogram()
-       print("")
-       input(color_text("Press Enter to continue", YELLOW))
     else:
         print(color_text("Invalid choice! Please enter a number between 0 and 11", RED))
         input(color_text("Press Enter to continue", YELLOW))
-

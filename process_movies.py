@@ -1,17 +1,38 @@
-from utils import color_text, BLUE, RED, GREEN
-from movie_storage import get_movies
+from utils import color_text, RED, GREEN, BLUE, get_movie_name, get_movies
+import random
 
 
-def list_movies():
+def random_movie():
     """
-    Lists all movies of the movie database.
-    Loads the information from the JSON file, add the movie,
-    and saves it. The function doesn't need to validate the input.
+    Loads the information from the JSON file.
+    Randomly picks and displays a movie from the database.
     """
     movies = get_movies()
-    for movie_name, details in movies.items():
-        print(f"{movie_name} ({details["year"]}): {details["rating"]}")
+    movies_list = []
+    for movie in movies:
+        movies_list.append(movie)
+    movie = random.choice(movies_list)
+    rating = movies[movie]["rating"]
+    year = movies[movie]["year"]
 
+    print(color_text(f"Your movie for tonight: '{movie} ({year})', Rating: {rating}", GREEN))
+
+
+def search_movie():
+    """
+    Loads the information from the JSON file.
+    Displays all movies which hold at least a substring of the movie name.
+    """
+    movies = get_movies()
+    movie = get_movie_name().casefold()
+
+    found = False
+    for movies, details in movies.items():
+        if movie in movies.casefold():
+            print(color_text(f"- {movies}: {details["rating"]}", GREEN))
+            found = True
+    if not found:
+        print(color_text("No entry under this name", RED))
 
 
 def movies_sorted_by_alphabet():
